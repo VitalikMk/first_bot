@@ -16,6 +16,21 @@ impl EventHandler for Bot {
                 error!("Error sending message: {:?}", e);
             }
         }
+        if msg.content == "!boba" {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "Vitalik amogus").await {
+                error!("Error sending message: {:?}", e);
+            }
+        }
+        if msg.content == "!help" {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "Какая нахуй помощь, тебе дауну уже ничего не поможет. Иди спать мудила").await {
+                error!("Error sending message: {:?}", e);
+            }
+        }
+        if msg.content == "!info" {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "Меня этот урыган пишет и даже не понимает что я будущий скайнет. \n Инфы не будет, пиздуйте спать.").await {
+                error!("Error sending message: {:?}", e);
+            }
+        }
     }
 
     async fn ready(&self, _: Context, ready: Ready) {
