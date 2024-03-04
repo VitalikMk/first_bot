@@ -1,21 +1,65 @@
 use anyhow::anyhow;
+use serenity::all::*;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
-use serenity::prelude::*;
 use shuttle_secrets::SecretStore;
 use tracing::{error, info};
+use serenity::model::id::ChannelId;
 
 struct Bot;
 
 #[async_trait]
 impl EventHandler for Bot {
+
+
+
     async fn message(&self, ctx: Context, msg: Message) {
+
+
         if msg.content == "!hello" {
-            if let Err(e) = msg.channel_id.say(&ctx.http, "world!").await {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "word").await {
                 error!("Error sending message: {:?}", e);
             }
         }
+
+
+        if msg.content == "!ping" {
+
+            let channel = match msg.channel_id.to_channel(&ctx).await {
+                Ok(channel) => channel,
+                Err(why) => {
+                    println!("Error getting channel: {why:?}");
+
+                    return;
+                },
+            };
+
+
+            let response = MessageBuilder::new()
+                .push("User ")
+                .push_bold_safe(&msg.author.name)
+                .push(" used the 'ping' command in the ")
+                .mention(&channel)
+                .push(" channel")
+                .build();
+
+            if let Err(why) = msg.channel_id.say(&ctx.http, &response).await {
+                println!("Error sending message: {why:?}");
+            }
+        }
+
+
+        if msg.content == "!messageme" {
+            let builder = CreateMessage::new().content("Hello!");
+            let dm = msg.author.dm(&ctx, builder).await;
+
+            if let Err(why) = dm {
+                println!("Error when direct messaging user: {why:?}");
+            }
+        }
+
+
         if msg.content == "!boba" {
             if let Err(e) = msg.channel_id.say(&ctx.http, "Vitalik amogus").await {
                 error!("Error sending message: {:?}", e);
@@ -27,15 +71,35 @@ impl EventHandler for Bot {
             }
         }
         if msg.content == "!info" {
-            if let Err(e) = msg.channel_id.say(&ctx.http, "Меня этот урыган пишет и даже не понимает что я будущий скайнет. \n Инфы не будет, пиздуйте спать.").await {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "Меня этот урыган пишет и даже не понимает что я будущий скайнет. \nИнфы не будет, пиздуйте спать.").await {
                 error!("Error sending message: {:?}", e);
             }
         }
     }
 
-    async fn ready(&self, _: Context, ready: Ready) {
+    async fn ready(&self, ctx: Context, ready: Ready) {
+
         info!("{} is connected!", ready.user.name);
+
+
+
+        let guild_id = GuildId(1088177574913507331);
+
+
+
+        let commands = GuildId::set_commands(&guild_id, &ctx.http, |commands| {
+
+            commands.create_application_command(|command| { command.name("hello").description("Say hello") })
+
+        }).await.unwrap();
+
+
+
+        info!("{:#?}", commands);
+
     }
+
+
 }
 
 #[shuttle_runtime::main]
