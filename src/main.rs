@@ -83,7 +83,7 @@ impl EventHandler for Bot {
 
 
 
-        let guild_id = GuildId(1088177574913507331);
+        let guild_id = GuildId();
 
 
 
