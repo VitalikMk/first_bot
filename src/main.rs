@@ -70,8 +70,8 @@ impl EventHandler for Bot {
         }
 
 
-        if msg.content == "!boba" {
-            if let Err(e) = msg.channel_id.say(&ctx.http, "Vitalik amogus").await {
+        if msg.content == "!vitalik" {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "vitalik the best").await {
                 error!("Error sending message: {:?}", e);
             }
         }
